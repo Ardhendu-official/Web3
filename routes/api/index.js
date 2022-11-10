@@ -5,13 +5,13 @@ const router = express.Router();
 // const recordingsRoutes = require('./recordings');
 // const statusRoutes = require('./status');
 const home = require('./home');
-const ether = require('./ether');
+const tron = require('./tron');
 
 // router.use('/cameras', cameraRoutes);
 // router.use('/recordings', recordingsRoutes);
 // router.use('/status', statusRoutes);
 
 router.use('/', home)
-router.use('/ether', ether)
+router.use('/tron', tron)
 
 module.exports = router;
