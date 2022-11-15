@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   origin:
@@ -7,8 +7,4 @@ services:
     ports:
     - "2352:2352/tcp"
     # environment:
-
-    # command: bash -c 'yarn && yarn start'
-    command: bash -c 'npm run start'
-    volumes:
-      - ./:/app
+    command: bash -c 'node app.js'
