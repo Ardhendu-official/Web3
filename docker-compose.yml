@@ -9,6 +9,6 @@ services:
     # environment:
 
     # command: bash -c 'yarn && yarn start'
-    command: bash -c 'yarn && yarn dev'
+    command: bash -c 'npm run start'
     volumes:
-      - ./src:/app
+      - ./:/app
