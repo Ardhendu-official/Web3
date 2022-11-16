@@ -149,6 +149,18 @@ router.post("/wallet/balance", async (req, res) => {
     }
 })
 
+/////////////////////////////// IS PHASE //////////////////////////////
+
+router.post("/isphase", async (req, res) => {
+    if(utils.validateMnemonic(req.body.phase)){
+        res.status(200)
+        res.send({ status: true, massage: "It's a Phase" })
+    }else{
+        res.status(400)
+        res.send({ status: false, massage: "It's not a Phase" })
+    }
+})
+
 /////////////////////////////// SEND TRX (TESTING) //////////////////////////////
 
 router.post("/wallet/send", async (req, res) => {
