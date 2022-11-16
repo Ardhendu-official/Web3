@@ -1,5 +1,4 @@
 const express = require('express');
-const Web3 = require("web3");
 const TronWeb = require('tronweb');
 const hdWallet = require('tron-wallet-hd');
 const keyStore=hdWallet.keyStore;
@@ -15,24 +14,28 @@ tronWeb.setHeader({ "TRON-PRO-API-KEY": API_Key });
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    res.send({ data: 'Ether' });
+    res.send({ data: 'tron' });
 });
 
 router.post("/account", async (req, res) => {
-    let data = await tronWeb.createAccount();
-    let value = await utils.generateMnemonic();
-    // let seed = utils.generateMnemonic();
-    // let accounts = await utils.generateAccountsWithMnemonic(seed,1);
-    res.send([data, value]);
-
+    let seed = await utils.generateMnemonic();
+    let accounts = await utils.generateAccountsWithMnemonic(seed,1);
+    let data = {
+        "account": {
+            "privateKey": accounts[0].privateKey,
+            "address": accounts[0].address
+        },
+        "phase": seed
+    }
+    res.send(data);
 })
 
 router.post("/wallet", async (req, res) => {
-    let data = await tronWeb.createRandom({ path: "m/44'/195'/0'/0/0", extraEntropy: '', locale: 'en' });
+    let data = await tronWeb.createRandom({ path: "m/44'/195'/0'/0/2", extraEntropy: '', locale: 'en' });
     let final_data = {
         "mnemonic": {
           "phrase": data.mnemonic.phrase,
-          "path": "m/44'/195'/0'/0/0",
+          "path": "m/44'/195'/0'/0/2",
           "locale": "en"
         },
         "privateKey": tronWeb.fromUtf8(data.privateKey),
@@ -45,15 +48,15 @@ router.post("/wallet", async (req, res) => {
 })
 
 router.post("/wallet/details", async (req, res) => {
-    let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
-
-    if(tronWeb.isAddress(req.body.address)){
-        tronWeb.trx.getAccount(req.body.address).then((result) => {
-            let data = result
-            console.log(data);
-            res.send(data)
-        })
-    }
+   let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
+   await axios.get(url).then((data) => {
+        res.status(200)
+       res.send(data.data)
+   }).catch(e => {
+        res.status(400)
+        res.send({status: 400, massage: "Wrong Address"})
+        console.log(e)
+   })
 })
 
 router.post("/wallet/import", async (req, res) => {
@@ -72,18 +75,17 @@ router.post("/wallet/import/private", async (req, res) => {
     res.send(data);
 })
 
-router.post("/wallet/details", async (req, res) => {
-    let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
-    // let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
-
-    if(tronWeb.isAddress(req.body.address)){
-        tronWeb.trx.getAccount(req.body.address).then((result) => {
-            let data = result
-            console.log(data);
-            res.send(data)
-        })
-    }
-})
+// router.post("/wallet/details", async (req, res) => {
+//     let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
+//     // let url = `https://apilist.tronscan.org/api/account?address=${req.body.address}`;
+//     if(tronWeb.isAddress(req.body.address)){
+//         tronWeb.trx.getAccount(req.body.address).then((result) => {
+//             let data = result
+//             console.log(data);
+//             res.send(data)
+//         })
+//     }
+// })
 
 router.post("/wallet/send", async (req, res) => {
     // const privateKey = "0x6acf29c540a0c29899c898e6c31a7d318a97dfcba0148760c951f51d9dbc9dfb"; 
@@ -103,7 +105,7 @@ router.post("/wallet/send", async (req, res) => {
     // let receipt = await tronWeb.trx.sendRawTransaction(
     //     signedtxn
     // ).then(output => {console.log('- Output:', output, '\n');});
-    let data = await tronWeb.transactionBuilder.sendTrx("TRs3FRfbN9cV8NY53TBqCRcytRMyw53r7p", 100, "TGNFDPZimQ33UiQvjF6MH7dZdJ2dWpUncb");
+    let data = await tronWeb.transactionBuilder.sendTrx("TS3GQzrHfLD4vvP9HKuThg1RBiKBWkCoRk", 100, "TRs3FRfbN9cV8NY53TBqCRcytRMyw53r7p");
     res.send(data)
 })
 

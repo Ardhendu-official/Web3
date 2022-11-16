@@ -4,7 +4,7 @@
   "description": "web3-for-ethar",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --legacy-watch app.js",
+    "start": "nodemon --legacy-watch --openssl-legacy-provider app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Puspendu",
