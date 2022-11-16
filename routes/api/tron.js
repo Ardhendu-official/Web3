@@ -19,12 +19,16 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/account", async (req, res) => {
-    let data = await tronWeb.createAccount();
-    let value = await utils.generateMnemonic();
-    // let seed = utils.generateMnemonic();
-    // let accounts = await utils.generateAccountsWithMnemonic(seed,1);
-    res.send([data, value]);
-
+    let seed = await utils.generateMnemonic();
+    let accounts = await utils.generateAccountsWithMnemonic(seed,1);
+    let data = {
+        "account": {
+            "privateKey": accounts[0].privateKey,
+            "address": accounts[0].address
+        },
+        "phase": seed
+    }
+    res.send(data);
 })
 
 router.post("/wallet", async (req, res) => {
