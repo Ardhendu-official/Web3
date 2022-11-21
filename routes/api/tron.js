@@ -14,6 +14,9 @@ const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
 tronWeb.setHeader({ "TRON-PRO-API-KEY": API_Key });
 const router = express.Router();
 
+const fs = require('fs');
+const JWT = require('jsonwebtoken');
+
 router.get("/", async (req, res) => {
     res.send({ data: 'tron' });
 });
@@ -164,120 +167,67 @@ router.post("/isphase", async (req, res) => {
 
 /////////////////////////////// SEND TRX (TESTING) //////////////////////////////
 
-// router.post("/wallet/send", async (req, res) => {
-// const privateKey = "0x6acf29c540a0c29899c898e6c31a7d318a97dfcba0148760c951f51d9dbc9dfb"; 
-// var fromAddress = "TGNFDPZimQ33UiQvjF6MH7dZdJ2dWpUncb"; //address _from
-// var toAddress = "TRs3FRfbN9cV8NY53TBqCRcytRMyw53r7p"; //address _to
-// var amount = 10; //amount
-// //Creates an unsigned TRX transfer transaction
-// tradeobj = await tronWeb.transactionBuilder.sendTrx(
-//     toAddress,
-//     amount,
-//     fromAddress
-// );
-// let signedtxn = await tronWeb.trx.sign(
-//     tradeobj,
-//     privateKey
-// );
-// let receipt = await tronWeb.trx.sendRawTransaction(
-//     signedtxn
-// ).then(output => {console.log('- Output:', output, '\n');});
-// let data = await tronWeb.transactionBuilder.sendTrx("TS3GQzrHfLD4vvP9HKuThg1RBiKBWkCoRk", 100, "TRs3FRfbN9cV8NY53TBqCRcytRMyw53r7p");
-// res.send(data)
-// })
+async function verifySign() {
+    var privateKEY = fs.readFileSync('./private.pem', 'utf8');
+    var publicKEY = fs.readFileSync('./public.pem', 'utf8');
 
-/////////////////////////////// SEND TRX (TESTING) //////////////////////////////
+    var header = {
+        algorithm: "RS256",
+        "typ": "JWT",
+        "kid": "e09bca80af19466da9c4360c3a0244f1"
+    };
 
-async function sendTrx(fromAddress, toAddress, amount, privateKey, AppKey) {
+    let payload = {
+        "exp": 1617736153,
+        "aud": "trongrid.io"
+    }
+
+    let token = JWT.sign(payload, privateKEY, header);
+
+    console.log("Generated token = " + token);
+
+    return token;
+}
+
+async function sendTRX(fromAddress, toAddress, amount, privateKey, AppKey) {
+
+    let tocken = `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImUwOWJjYTgwYWYxOTQ2NmRhOWM0MzYwYzNhMDI0NGYxIn0.eyJleHAiOiIxMkgiLCJhdWQiOiJ0cm9uZ3JpZC5pbyJ9.Sp2vx5LumfEMxoGtEY0v7eDwlEY9CQ43_I37mWev7VyRTA6C-1ZlWVLcx7fHFtGXQiULBMXGvhQMt8ieCyWj9dPxOdwDzxQivuF9W1MH-BlaJVO2TXsaimtr4VNjQ_JCuw6CCZGz1pfMbj7r54A48d93TMOmsd20kO4CzH_631H6SRviw2J7aZLeI22Jyx8GAfNMgRnTa8lvoW2D7ecZN3-Gppkh-6CxLOarn5K_7ERu349V9qnNMkW1NIkL50WBZpanTRsRobUXNi0rayaIl7K5j0z-aezay9fdc5T3RX-5Da9Q4XN-RdVdpLw4GriG-SDT_QalTehT_53_wogQ_g`;
 
     const tronWebSend = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
     tronWebSend.setHeader({ "TRON-PRO-API-KEY": API_Key });
+    tronWebSend.setHeader({ "Authorization": `Bearer ${tocken}` });
 
     console.log(tronWeb.address.toHex(fromAddress) + " => " + tronWeb.address.toHex(toAddress))
 
-    const tradeobj = await tronWebSend.transactionBuilder.sendTrx(
-        tronWeb.address.toHex(toAddress),
-        amount,
-        tronWeb.address.toHex(fromAddress)
-    );
-    await tronWebSend.transactionBuilder.sendTrx()
-    console.log('tradeobj => ' + tradeobj)
+    var tradeobj = '';
+
+    await tronWebSend.transactionBuilder.sendTrx(toAddress, amount, fromAddress, 1).then(async (data) => {
+        tradeobj = data;
+    }).catch(e => {
+        console.log(e)
+    });
 
     const signedtxn = await tronWebSend.trx.sign(
         tradeobj,
         privateKey
     );
 
-    console.log('signedtxn => ' + signedtxn);
-
     const receipt = await tronWebSend.trx.sendRawTransaction(
         signedtxn
     );
 
-    console.log('receipt => ' + receipt);
-    
     return receipt;
 }
 
-async function sendTrxApi(fromAddress, toAddress, amount, privateKey, AppKey) {
-    let axios = require("axios");
-
-    let options = {
-        method: 'POST',
-        url: 'https://api.trongrid.io/wallet/createtransaction',
-        headers: {
-            'TRON-PRO-API-KEY': API_Key,
-            'Content-Type': 'application/json',
-            'Origin': 'http://localhost:2352'
-        },
-        body: {
-            to_address: tronWeb.address.toHex(toAddress),
-            owner_address: tronWeb.address.toHex(fromAddress),
-            amount: amount
-        },
-        json: true
-    };
-
-    // request(options, function (error, response, body) {
-    //     if (error) throw new Error(error);
-    //     console.log(body);
-    //     return body;
-    // });
-
-    axios.post('https://api.trongrid.io/wallet/createtransaction', { body: options.body }, { headers: options.headers }).then((data) => {
-        console.log(data.data);
-        return data.data
-    }).catch((e) => {
-        console.log(e)
-        return e
-    })
-}
-
-// async function sendTrxNodeApi(fromAddress, toAddress, amount, privateKey, AppKey) {
-//     const sdk = require('api')('@tron/v4.5.2#2rmgtmla6jxxz8');
-
-//     sdk.gettransactionsign({
-//         transaction: {
-//             raw_data: '{"contract":[{"parameter":{"value":{"amount":1000,"owner_address":"41608f8da72479edc7dd921e4c30bb7e7cddbe722e","to_address":"41e9d79cc47518930bc322d9bf7cddd260a0260a8d"},"type_url":"type.googleapis.com/protocol.TransferContract"},"type":"TransferContract"}],"ref_block_bytes":"5e4b","ref_block_hash":"47c9dc89341b300d","expiration":1591089627000,"timestamp":1591089567635}',
-//             raw_data_hex: '0a025e4b220847c9dc89341b300d40f8fed3a2a72e5a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541608f8da72479edc7dd921e4c30bb7e7cddbe722e121541e9d79cc47518930bc322d9bf7cddd260a0260a8d18e8077093afd0a2a72e'
-//         },
-//         privateKey: 'your private key'
-//     })
-//         .then(({ data }) => console.log(data))
-//         .catch(err => console.error(err));
-// }
-
 router.post("/wallet/send", async (req, res) => {
-    sendTrx(req.body.from_account, req.body.to_account, req.body.amount, req.body.privateKey, API_Key).then((data) => {
-        console.log("ok" + data);
+    sendTRX(req.body.from_account, req.body.to_account, req.body.amount, req.body.privateKey, API_Key).then((data) => {
         res.status(200)
         res.send(data)
-    })
-        .catch((err) => {
-            console.log("error:", err);
-            res.status(400)
-            res.send(err)
-        });
+    }).catch((err) => {
+        console.log("error:", err);
+        res.status(400)
+        res.send(err)
+    });
 })
 
 module.exports = router;
