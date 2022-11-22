@@ -8,6 +8,3 @@ services:
     - "2352:2352/tcp"
     # environment:
     command: bash -c 'node app.js'
-    volumes:
-      # - ./tmp:/app/tmp
-      - ./:/app
