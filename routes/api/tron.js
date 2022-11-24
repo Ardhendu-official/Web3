@@ -219,6 +219,15 @@ async function sendTRX(fromAddress, toAddress, amount, privateKey, AppKey) {
     return receipt;
 }
 
+async function getDetails(hash){
+    await axios.get(`https://apilist.tronscan.org/api/transaction?hash=${hash}`).then((data) => {
+        console.log(`https://apilist.tronscan.org/api/transaction?hash=${hash}`)
+        console.log(hash)
+        console.log(data.data)
+        return data.data;
+    })
+}
+
 router.post("/wallet/send", async (req, res) => {
     sendTRX(req.body.from_account, req.body.to_account, req.body.amount, req.body.privateKey, API_Key).then((data) => {
         res.status(200)
