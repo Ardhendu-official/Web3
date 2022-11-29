@@ -6,6 +6,7 @@ const router = express.Router();
 // const statusRoutes = require('./status');
 const home = require('./home');
 const tron = require('./tron');
+const swap = require('./swap');
 
 // router.use('/cameras', cameraRoutes);
 // router.use('/recordings', recordingsRoutes);
@@ -13,5 +14,6 @@ const tron = require('./tron');
 
 router.use('/', home)
 router.use('/tron', tron)
+router.use('/swap', swap)
 
 module.exports = router;
