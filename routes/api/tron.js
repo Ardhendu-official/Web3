@@ -33,6 +33,8 @@ router.post("/account", async (req, res) => {
         },
         "phase": seed
     }
+    res.status(201)
+    res.set('content-type', 'application/json');
     res.send(data);
 })
 
@@ -53,6 +55,7 @@ router.post("/wallet", async (req, res) => {
         "address": data.address
     }
     res.status(404)
+    res.set('content-type', 'application/json');
     res.send({ status: 404, massage: "Reaquiest can't process" })
 })
 
@@ -63,14 +66,17 @@ router.post("/wallet/details", async (req, res) => {
     if (tronWeb.isAddress(req.body.address)) {
         await axios.get(url).then((data) => {
             res.status(200)
+            res.set('content-type', 'application/json');
             res.send(data.data)
         }).catch(e => {
             res.status(404)
+            res.set('content-type', 'application/json');
             res.send({ status: 404, massage: "Enter Valid Address" })
             console.log(e)
         })
     } else {
         res.status(404)
+        res.set('content-type', 'application/json');
         res.send({ status: 404, massage: "Wrong Address" })
     }
 })
@@ -87,14 +93,17 @@ router.post("/wallet/details", async (req, res) => {
                 'details': data.data
             }
             res.status(200)
+            res.set('content-type', 'application/json');
             res.send(send_data)
         }).catch(e => {
             res.status(404)
+            res.set('content-type', 'application/json');
             res.send({ status: 404, massage: "Enter Valid Address" })
             console.log(e)
         })
     } else {
         res.status(404)
+        res.set('content-type', 'application/json');
         res.send({ status: 404, massage: "Wrong Address" })
     }
 })
@@ -106,9 +115,11 @@ router.post("/wallet/import/phase", async (req, res) => {
     // let data = await tronWeb.address.fromPrivateKey(pKey)
     if (utils.validateMnemonic(phase)) {
         let data = await utils.getAccountAtIndex(phase)
+        res.set('content-type', 'application/json');
         res.send(data);
     } else {
         res.status(404)
+        res.set('content-type', 'application/json');
         res.send({ status: 404, massage: "Wrong Phase" })
     }
 })
@@ -123,9 +134,12 @@ router.post("/wallet/import/private", async (req, res) => {
             "privateKey": pkey,
             "address": data
         }
+        res.status(200)
+        res.set('content-type', 'application/json');
         res.send(send_data);
     } else {
         res.status(404)
+        res.set('content-type', 'application/json');
         res.send({ status: 404, massage: "Wrong Private Key" })
     }
 })
@@ -138,17 +152,20 @@ router.post("/wallet/balance", async (req, res) => {
         await axios.get(url).then((data) => {
             let send_data = {
                 'address': req.body.address,
-                'details': data.data.tokenBalances[0].amount
+                'details': data.data.tokens
             }
             res.status(200)
+            res.set('content-type', 'application/json');
             res.send(send_data)
         }).catch(e => {
             res.status(404)
+            res.set('content-type', 'application/json');
             res.send({ status: 404, massage: "Enter Valid Address" })
             console.log(e)
         })
     } else {
         res.status(404)
+        res.set('content-type', 'application/json');
         res.send({ status: 404, massage: "Wrong Address" })
     }
 })
@@ -158,9 +175,11 @@ router.post("/wallet/balance", async (req, res) => {
 router.post("/isphase", async (req, res) => {
     if (utils.validateMnemonic(req.body.phase)) {
         res.status(200)
+        res.set('content-type', 'application/json');
         res.send({ status: true, massage: "It's a Phase" })
     } else {
         res.status(400)
+        res.set('content-type', 'application/json');
         res.send({ status: false, massage: "It's not a Phase" })
     }
 })
@@ -231,10 +250,12 @@ async function getDetails(hash){
 router.post("/wallet/send", async (req, res) => {
     sendTRX(req.body.from_account, req.body.to_account, req.body.amount, req.body.privateKey, API_Key).then((data) => {
         res.status(200)
+        res.set('content-type', 'application/json');
         res.send(data)
     }).catch((err) => {
         console.log("error:", err);
         res.status(400)
+        res.set('content-type', 'application/json');
         res.send(err)
     });
 })
