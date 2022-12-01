@@ -96,5 +96,27 @@ router.get("/check/", async (req, res) => {
     }).catch((e) => { console.log(e) })
 })
 
+router.get("/all/pair/", async (req, res) => {
+    let page_size = req.query.page_size;
+    let page_num = req.query.page_num;
+    let ver = req.query.ver;
+    axios.get(`https://openapi.sun.io/v2/allpairs?page_size=${page_size}&page_num=${page_num}&ver=${ver}`).then((data) => {
+        res.status(200)
+        res.set('content-type', 'application/json')
+        res.send(data.data)
+    }).catch((e) => { console.log(e) })
+})
+
+router.get("/pair/add/", async (req, res) => {
+    let page_size = req.query.page_size;
+    let page_num = req.query.page_num;
+    let ver = req.query.ver;
+    let token_address = req.query.token_address;
+    axios.get(`https://openapi.sun.io/v2/allpairs?page_size=${page_size}&page_num=${page_num}&ver=${ver}&token_address=${token_address}`).then((data) => {
+        res.status(200)
+        res.set('content-type', 'application/json')
+        res.send(data.data)
+    }).catch((e) => { console.log(e) })
+})
 
 module.exports = router;
