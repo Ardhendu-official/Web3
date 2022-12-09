@@ -10,81 +10,149 @@ router.get("/", async (req, res) => {
 /////////////////////////////// CURRENCY //////////////////////////////
 
 router.get("/curency/", async (req, res) => {
-    let curency_name = req.query.name;
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_currency?api_key=${API_KEY}&symbol=${curency_name}`).then((data) => {
+    let curency_name = req.body.name;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/currency/${curency_name}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
 
 /////////////////////////////// ALL CURRENCY //////////////////////////////
 
 router.get("/curency/all/", async (req, res) => {
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_all_currencies?api_key=${API_KEY}`).then((data) => {
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/currency?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
 
 /////////////////////////////// PAIR //////////////////////////////
 
 router.get("/pair/", async (req, res) => {
-    let curency_name = req.query.name;
-    let fixed = req.query.fixed;
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_pairs?api_key=${API_KEY}&fixed=${fixed}&symbol=${curency_name}`).then((data) => {
+    let curency_name = req.body.name;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/pairs/${curency_name}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
 
 /////////////////////////////// ALL PAIR (NOT RECOMENDED) //////////////////////////////
 
 router.get("/pair/all/", async (req, res) => {
-    let fixed = req.query.fixed;
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_all_pairs?api_key=${API_KEY}&fixed=${fixed}`).then((data) => {
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/pairs?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
 
 /////////////////////////////// ESTIMATED //////////////////////////////
 
 router.get("/estimated/", async (req, res) => {
-    let fixed = req.query.fixed;
-    let currency_from = req.query.currency_from;
-    let currency_to = req.query.currency_to;
-    let amount = req.query.amount;
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_estimated?api_key=${API_KEY}&fixed=${fixed}&currency_from=${currency_from}&currency_to=${currency_to}&amount=${amount}`).then((data) => {
+    let currency_from = req.body.currency_from;
+    let currency_to = req.body.currency_to;
+    let amount = req.body.amount;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/estimate/${currency_from}/${currency_to}?amount=${amount}&api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
+
+/////////////////////////////// MINIMAL //////////////////////////////
+
+router.get("/minimal/", async (req, res) => {
+    let currency_from = req.body.currency_from;
+    let currency_to = req.body.currency_to;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/min/${currency_from}/${currency_to}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
+        res.status(200)
+        res.set('content-type', 'application/json')
+        res.send(data.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+})
+
 
 /////////////////////////////// RANGE //////////////////////////////
 
 router.get("/range/", async (req, res) => {
-    let fixed = req.query.fixed;
-    let currency_from = req.query.currency_from;
-    let currency_to = req.query.currency_to;
-    let amount = req.query.amount;
-    const API_KEY = '8747d152-4e27-41ea-a80e-dd02dd214c9d'
-    axios.get(`https://api.simpleswap.io/get_ranges?api_key=${API_KEY}&fixed=${fixed}&currency_from=${currency_from}&currency_to=${currency_to}`).then((data) => {
+    let currency_from = req.body.currency_from;
+    let currency_to = req.body.currency_to;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/range/${currency_from}/${currency_to}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
         res.send(data.data)
-    }).catch((e) => { console.log(e) })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 })
 
+/////////////////////////////// Exchange information //////////////////////////////
+
+router.get("/exchange/id/", async (req, res) => {
+    let exchange_id = req.body.exchange_id;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/exchange/${exchange_id}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
+        res.status(200)
+        res.set('content-type', 'application/json')
+        res.send(data.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+})
+
+/////////////////////////////// Exchange create //////////////////////////////
+
+router.post("/exchange/create/", async (req, res) => {
+    let exchange_id = req.body.exchange_id;
+    const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
+    axios.get(`https://api.stealthex.io/api/v2/exchange/${exchange_id}?api_key=${API_KEY}`).then(function (data) {
+        console.log(JSON.stringify(data.data));
+        res.status(200)
+        res.set('content-type', 'application/json')
+        res.send(data.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+})
 
 /////////////////////////////// CHECK //////////////////////////////
 
@@ -96,27 +164,5 @@ router.get("/check/", async (req, res) => {
     }).catch((e) => { console.log(e) })
 })
 
-router.get("/all/pair/", async (req, res) => {
-    let page_size = req.query.page_size;
-    let page_num = req.query.page_num;
-    let ver = req.query.ver;
-    axios.get(`https://openapi.sun.io/v2/allpairs?page_size=${page_size}&page_num=${page_num}&ver=${ver}`).then((data) => {
-        res.status(200)
-        res.set('content-type', 'application/json')
-        res.send(data.data)
-    }).catch((e) => { console.log(e) })
-})
-
-router.get("/pair/add/", async (req, res) => {
-    let page_size = req.query.page_size;
-    let page_num = req.query.page_num;
-    let ver = req.query.ver;
-    let token_address = req.query.token_address;
-    axios.get(`https://openapi.sun.io/v2/allpairs?page_size=${page_size}&page_num=${page_num}&ver=${ver}&token_address=${token_address}`).then((data) => {
-        res.status(200)
-        res.set('content-type', 'application/json')
-        res.send(data.data)
-    }).catch((e) => { console.log(e) })
-})
 
 module.exports = router;
