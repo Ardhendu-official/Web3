@@ -141,9 +141,17 @@ router.get("/exchange/id/", async (req, res) => {
 /////////////////////////////// Exchange create //////////////////////////////
 
 router.post("/exchange/create/", async (req, res) => {
-    let exchange_id = req.body.exchange_id;
+    let currency_from = req.body.currency_from;
+    let currency_to = req.body.currency_to;
+    let address_to = req.body.address_to;
+    let amount_from = req.body.amount_from;
     const API_KEY = '61ade498-2c74-48fd-b737-4beebf69dbb9'
-    axios.get(`https://api.stealthex.io/api/v2/exchange/${exchange_id}?api_key=${API_KEY}`).then(function (data) {
+    axios.post(`https://api.stealthex.io/api/v2/exchange?api_key=${API_KEY}`,{
+      "currency_from": currency_from,
+      "currency_to": currency_to,
+      "address_to": address_to,
+      "amount_from": amount_from
+    }).then(function (data) {
         console.log(JSON.stringify(data.data));
         res.status(200)
         res.set('content-type', 'application/json')
@@ -155,7 +163,7 @@ router.post("/exchange/create/", async (req, res) => {
 })
 
 /////////////////////////////// CHECK //////////////////////////////
-
+ 
 router.get("/check/", async (req, res) => {
     axios.get(`https://api.simpleswap.io/check_exchanges`).then((data) => {
         res.status(200)

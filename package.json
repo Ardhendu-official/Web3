@@ -7,7 +7,7 @@
     "start": "nodemon --legacy-watch --openssl-legacy-provider app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Puspendu",
+  "author": "Ardhendu",
   "license": "ISC",
   "dependencies": {
     "api": "^5.0.1",
